@@ -1,14 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController02 : MonoBehaviour
 {
     public float jumpForce;
     public float gravityModifier;
     public ParticleSystem explosionParticle;
-    public ParticleSystem hitParticle;
     public ParticleSystem dirtParticle;
-    
+
     public AudioClip jumpSfx;
     public AudioClip crashSfx;
 
@@ -16,14 +15,11 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private bool isOnGround = true;
     private int jumpCount = 0;
-    public int hp = 5;
 
     private Animator playerAnim;
     private AudioSource playerAudio;
 
     public bool gameOver = false;
-    private InputAction SprintAction;
-    public bool isDashing = false;
 
     void Awake()
     {
@@ -38,7 +34,6 @@ public class PlayerController : MonoBehaviour
         Physics.gravity *= gravityModifier;
 
         jumpAction = InputSystem.actions.FindAction("Jump");
-        SprintAction = InputSystem.actions.FindAction("Sprint");
 
         gameOver = false;
     }
@@ -56,13 +51,6 @@ public class PlayerController : MonoBehaviour
             jumpCount++;
             Debug.Log(jumpCount);
         }
-
-        if (SprintAction.triggered)
-        {
-            Dash();
-        }
-
-        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -75,26 +63,14 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
-            hp--;
-            Debug.Log(hp);
+            Debug.Log("Game Over!");
+            gameOver = true;
+            playerAnim.SetBool("Death_b", true);
+            playerAnim.SetInteger("DeathType_int", 1);
             explosionParticle.Play();
-            if (hp <= 0)
-            {
-                Debug.Log("Game Over!");
-                gameOver = true;
-                playerAnim.SetBool("Death_b", true);
-                playerAnim.SetInteger("DeathType_int", 1);
-                explosionParticle.Play();
-                dirtParticle.Stop();
-                playerAudio.PlayOneShot(crashSfx);
-            }
-            
+            dirtParticle.Stop();
+            playerAudio.PlayOneShot(crashSfx);
         }
-    }
-
-    public void Dash()
-    {
-        isDashing = true;
     }
 
 }

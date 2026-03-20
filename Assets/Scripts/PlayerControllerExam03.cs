@@ -1,14 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController03 : MonoBehaviour
 {
     public float jumpForce;
     public float gravityModifier;
     public ParticleSystem explosionParticle;
-    public ParticleSystem hitParticle;
     public ParticleSystem dirtParticle;
-    
+
     public AudioClip jumpSfx;
     public AudioClip crashSfx;
 
@@ -16,7 +15,6 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private bool isOnGround = true;
     private int jumpCount = 0;
-    public int hp = 5;
 
     private Animator playerAnim;
     private AudioSource playerAudio;
@@ -61,8 +59,6 @@ public class PlayerController : MonoBehaviour
         {
             Dash();
         }
-
-        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -75,20 +71,13 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
-            hp--;
-            Debug.Log(hp);
+            Debug.Log("Game Over!");
+            gameOver = true;
+            playerAnim.SetBool("Death_b", true);
+            playerAnim.SetInteger("DeathType_int", 1);
             explosionParticle.Play();
-            if (hp <= 0)
-            {
-                Debug.Log("Game Over!");
-                gameOver = true;
-                playerAnim.SetBool("Death_b", true);
-                playerAnim.SetInteger("DeathType_int", 1);
-                explosionParticle.Play();
-                dirtParticle.Stop();
-                playerAudio.PlayOneShot(crashSfx);
-            }
-            
+            dirtParticle.Stop();
+            playerAudio.PlayOneShot(crashSfx);
         }
     }
 
